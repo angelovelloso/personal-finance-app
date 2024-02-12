@@ -1,8 +1,9 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from sqlmodel import Session, select
+from typing import List
 
 from app.db import get_session, init_db
-from app.models import FinancialEntry, Account
+from app.models import *
 
 import logging
 
@@ -10,37 +11,41 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-'''
-    # Avaliar se vou manter isso. Ver como se comporta, se apaga o banco toda vez.
-@app.on_event("startup")
-def on_startup():
-    init_db()
-'''
-
-@app.get('/ping')
-async def pong():
-    return {'ping': 'pong!'}
-
-@app.post('/new_account/', status_code=201, response_model=Account)
-def add_new_account(account: Account, session: Session = Depends(get_session)):
-    session.add(account)
+@app.post('/category/', status_code=201, response_model=CategoryRead)
+def add_new_category(
+    category: CategoryCreate,
+    session: Session = Depends(get_session)
+):
+    db_category = Category.model_validate(category)
+    session.add(db_category)
     session.commit()
-    session.refresh(account)
+    session.refresh(db_category)
+    return db_category
+
+@app.post('/account/', status_code=201, response_model=AccountRead)
+def add_new_account(account: AccountCreate, session: Session = Depends(get_session)):
+    db_account = Account.model_validate(account)
+    session.add(db_account)
+    session.commit()
+    session.refresh(db_account)
+    return db_account
+
+@app.get('/account/{account_id}', response_model=AccountRead)
+def read_account(account_id: int, session: Session = Depends(get_session)):
+    account = session.get(Account, account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account doesn't exists")
     return account
 
-@app.get('/account/')
-def read_account(session: Session = Depends(get_session)):
+@app.get('/accounts/', response_model=List[AccountRead])
+def read_accounts(session: Session = Depends(get_session)):
     accounts = session.exec(select(Account)).all()
     return accounts
 
-@app.post('/new_entry/', status_code=201, response_model=FinancialEntry)
-def add_new_entry(entry: FinancialEntry, session: Session = Depends(get_session)):
-    return entry
-
-'''
-    logger.info(f'Entrada: {entry}')
-    session.add(entry)
+@app.post('/entries/', status_code=201, response_model=FinancialEntryRead)
+def add_new_entry(entry: FinancialEntryCreate, session: Session = Depends(get_session)):
+    db_entry = FinancialEntry.model_validate(entry)
+    session.add(db_entry)
     session.commit()
-    session.refresh(entry)
-    return entry
-'''
+    session.refresh(db_entry)
+    return db_entry

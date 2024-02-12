@@ -177,4 +177,6 @@ pyrightconfig.json
 
 # Generated using ignr.py - github.com/Antrikshy/ignr.py
 
-data/db/db.sqlite
+data/db/*
+data/input/*
+startup_defaults/
