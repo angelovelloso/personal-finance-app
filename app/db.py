@@ -1,9 +1,13 @@
 import os
 from sqlmodel import create_engine, SQLModel, Session
-from app.models import FinantialEntry
+from app import models
 
 database_url = 'sqlite:///data/db/db.sqlite'
-engine = create_engine(database_url, echo=True)
+
+engine = create_engine(
+    database_url, 
+    connect_args={ "check_same_thread": False },
+    echo=True)
 
 def init_db():
     SQLModel.metadata.create_all(engine)

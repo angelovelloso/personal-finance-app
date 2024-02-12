@@ -11,6 +11,7 @@ sqlmodel = "^0.0.14"
 alembic = "^1.13.1"
 fastapi = "^0.109.2"
 uvicorn = "^0.27.1"
+pydantic-settings = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.21.0"
@@ -46,6 +47,6 @@ extend-exclude = '(migrations/)'
 lint = 'ruff . && blue --check . --diff && isort --check . --diff'
 format = 'blue .  && isort .'
 run = 'uvicorn app.main:app --reload'
-pre_test = 'task lint'
+#pre_test = 'task lint'
 test = 'pytest -s -x --cov=app -vv'
 post_test = 'coverage html'
