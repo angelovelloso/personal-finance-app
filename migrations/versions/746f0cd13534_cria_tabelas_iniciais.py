@@ -1,8 +1,8 @@
-"""table alterations
+"""Cria tabelas iniciais
 
-Revision ID: 46ece57a2e30
+Revision ID: 746f0cd13534
 Revises: 
-Create Date: 2024-02-12 10:17:50.954963
+Create Date: 2024-02-17 12:46:32.475428
 
 """
 from typing import Sequence, Union
@@ -13,7 +13,7 @@ import sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision: str = '46ece57a2e30'
+revision: str = '746f0cd13534'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,6 +24,7 @@ def upgrade() -> None:
     op.create_table('account',
     sa.Column('account', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('description', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('account_currency', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -31,6 +32,7 @@ def upgrade() -> None:
     op.create_table('category',
     sa.Column('category', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('parent_category_id', sa.Integer(), nullable=True),
+    sa.Column('category_polarity', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['parent_category_id'], ['category.id'], ),
     sa.PrimaryKeyConstraint('id')

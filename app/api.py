@@ -1,8 +1,8 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Session, select
 from typing import List
 
-from app.db import get_session, init_db
+from app.database import get_session, init_db
 from app.models import *
 
 import logging
@@ -10,6 +10,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+@app.get('/categories/', response_model=List[CategoryRead])
+def read_categories(
+    offset: int = 0, 
+    limit: int = Query(default=20, le=20), 
+    session: Session = Depends(get_session)
+):
+    categories = session.exec(select(Category).offset(offset).limit(limit)).all()
+    return categories
 
 @app.post('/category/', status_code=201, response_model=CategoryRead)
 def add_new_category(

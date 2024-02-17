@@ -1,3 +1,7 @@
+
+
+
+
 # Referências
 
 - Curso FAST API do Zero: https://fastapidozero.dunossauro.com/

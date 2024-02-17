@@ -179,4 +179,5 @@ pyrightconfig.json
 
 data/db/*
 data/input/*
+data/output/*
 startup_defaults/

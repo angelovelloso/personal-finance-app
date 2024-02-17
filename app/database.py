@@ -1,8 +1,12 @@
 import os
+import pandas as pd
 from sqlmodel import create_engine, SQLModel, Session
 from app import models
+from app.settings import Settings
 
-database_url = 'sqlite:///data/db/db.sqlite'
+# alembic revision --autogenerate -m "<msg>"
+
+database_url = Settings().DATABASE_URL
 
 engine = create_engine(
     database_url, 
