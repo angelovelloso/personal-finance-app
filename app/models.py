@@ -4,6 +4,8 @@ from typing import List, Optional
 from decimal import Decimal
 from datetime import date, datetime
 
+# alembic revision --autogenerate -m "<msg>"
+
 class AccountBase(SQLModel):
     account: str = Field(index=True)
     description: str
@@ -54,20 +56,24 @@ class FinancialEntryBase(SQLModel):
     entry_date: date 
     report_date: date
     description: str = Field(max_length=100)
+    annotation: Optional[str] = Field(default=None, max_length=100)
     value: Decimal = Field(decimal_places=2)
     tags: Optional[str] = None
 
     @field_validator('entry_date', 'report_date', mode='before')
     @classmethod
     def parse_date(cls, value):
-        return datetime.strptime(
-            value,
-            "%d/%m/%Y"
-        ).date()
+        if isinstance(value, str):
+            return datetime.strptime(
+                value,
+                "%d/%m/%Y"
+            ).date()
+        
+        else:
+            return value
 
-class FinancialEntryCreate(FinancialEntryBase):
+class NewFinancialEntryCreate(FinancialEntryBase):
     account: Optional[str] = None
-    category: Optional[str] = None
 
 class FinancialEntryRead(FinancialEntryBase):
     id: int
@@ -80,3 +86,29 @@ class FinancialEntry(FinancialEntryBase, table=True):
     account: Optional[Account] = Relationship()
     category_id: Optional[int] = Field(default=-1, foreign_key='category.id')
     category: Optional[Category] = Relationship()
+    transfer_id: Optional[int] = Field(default=None, foreign_key='financialentry.id')
+
+class LoadClassifyDataQuery(SQLModel):
+    start_date: date = Field(default=None)
+    end_date: date = Field(default=None)
+    account_filters: List[str] = Field(default=None)
+    category_filters: List[str] = Field(default=None)
+    only_leaf: bool = Field(default=False)
+
+    @field_validator('start_date', 'end_date', mode='before')
+    @classmethod
+    def parse_date(cls, value):
+        return datetime.strptime(
+            value,
+            "%Y-%m-%d"
+        ).date()
+
+class LoadClassifyDataResponse(SQLModel):
+    accounts_list: List[str] = Field(default=None)
+    categories_list: List[str] = Field(default=None)
+    entries: List[list] = Field(default=None)
+
+class ClassifyEntryRequest(SQLModel):
+    entry_id: str
+    new_category: str
+    new_annotation: Optional[str] = Field(default=None)

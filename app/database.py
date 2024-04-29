@@ -1,12 +1,12 @@
 import os
 import pandas as pd
 from sqlmodel import create_engine, SQLModel, Session
-from app import models
-from app.settings import Settings
+import models
+from settings import Settings
 
 # alembic revision --autogenerate -m "<msg>"
 
-database_url = Settings().DATABASE_URL
+database_url = Settings().DB_URL_COMPLETE
 
 engine = create_engine(
     database_url, 

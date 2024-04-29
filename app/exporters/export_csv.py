@@ -14,7 +14,7 @@ tables = [
 for table in tables:
     config = {
                 'source': {
-                    'conn': Settings().DATABASE_URL,
+                    'conn': Settings().DB_URL_COMPLETE,
                     'stream': f"select * from {table}"
                 },
                 'target': {

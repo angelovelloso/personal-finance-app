@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Angelo Velloso"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -14,6 +15,8 @@ uvicorn = "^0.27.1"
 pydantic-settings = "^2.1.0"
 sling = "^1.1.5.post4"
 streamlit = "^1.31.1"
+tabula-py = {extras = ["jpype"], version = "^2.9.0"}
+pdfquery = "^0.4.3"
 
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.21.0"
@@ -25,6 +28,7 @@ ruff = "^0.2.1"
 httpx = "^0.26.0"
 isort = "^5.13.2"
 ignr = "^2.2"
+ipykernel = "^6.29.4"
 
 [build-system]
 requires = ["poetry-core"]
@@ -48,8 +52,8 @@ extend-exclude = '(migrations/)'
 [tool.taskipy.tasks]
 lint = 'ruff . && blue --check . --diff && isort --check . --diff'
 format = 'blue .  && isort .'
-run = 'uvicorn app.api:app --reload'
-ui = 'streamlit run app/app-ui.py'
+api = 'cd app && uvicorn api:app --reload'
+ui = 'streamlit run app/Home.py'
 #pre_test = 'task lint'
 test = 'pytest -s -x --cov=app -vv'
 post_test = 'coverage html'
